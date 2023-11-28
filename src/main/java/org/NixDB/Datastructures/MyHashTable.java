@@ -8,7 +8,7 @@ public class MyHashTable<K, V> implements Iterable<K> {
     private static final int DEFAULT_CAPACITY = 3;
     private static final double DEFAULT_LOAD_FACTOR = 0.75;
 
-    private double maxLoadFactor;
+    private final double maxLoadFactor;
     private int capacity, threshold, size = 0;
     private MyLinkedList<Entry<K, V>>[] table;
 
@@ -206,7 +206,7 @@ public class MyHashTable<K, V> implements Iterable<K> {
     @Override
     public java.util.Iterator<K> iterator() {
         final int elementCount = size();
-        return new java.util.Iterator<K>() {
+        return new java.util.Iterator<>() {
 
             int bucketIndex = 0;
             java.util.Iterator<Entry<K, V>> bucketIter = (table[0] == null) ? null : table[0].iterator();
@@ -255,7 +255,7 @@ public class MyHashTable<K, V> implements Iterable<K> {
         sb.append("{");
         for (int i = 0; i < capacity; i++) {
             if (table[i] == null) continue;
-            for (Entry<K, V> entry : table[i]) sb.append(entry + ", ");
+            for (Entry<K, V> entry : table[i]) sb.append(entry).append(", ");
         }
         sb.append("}");
         return sb.toString();
@@ -265,17 +265,17 @@ public class MyHashTable<K, V> implements Iterable<K> {
         MyHashTable<String, Integer> test = new MyHashTable<>();
 
         Random rand = new Random();
-        for (Integer i = 0; i < 65; i++) {
-            test.add(i.toString(), i+rand.nextInt(100));
+        for (int i = 0; i < 65; i++) {
+            test.add(Integer.toString(i), i+rand.nextInt(100));
         }
 
-        System.out.println(test.remove("25"));;
-        System.out.println(test.hasKey("24"));;
-        for (Iterator<String> it = test.iterator(); it.hasNext(); ) {
-            System.out.println(it.next());
+        System.out.println(test.remove("25"));
+        System.out.println(test.hasKey("24"));
+        for (String s : test) {
+            System.out.println(s);
         }
 
-        System.out.println(test.toString());
+        System.out.println(test);
 
 
 
