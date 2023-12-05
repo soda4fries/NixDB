@@ -1,4 +1,5 @@
 package org.NixDB.Datastructures;
+import java.util.Arrays;
 import java.util.Random;
 
 public class DumbSort {
@@ -27,13 +28,14 @@ public class DumbSort {
     public static void main(String[] args) {
         Random rand = new Random();
 
-            for (int i = 1; i < 13; i++) {
+            for (int i = 1; i < 30; i++) {
                 Integer[] arr = new Integer[i];
                 for (int j = 0; j < arr.length; j++) {
                     arr[j] = rand.nextInt();
                 }
                 long startTime = System.nanoTime();
                 performDumbSort(arr);
+                System.out.println(Arrays.toString(arr));
                 long endTime = System.nanoTime();
                 long timeTaken = endTime - startTime;
                 System.out.printf("n=%-5d t=%12dns %12f second\n", i, timeTaken, timeTaken/1000000000d);
