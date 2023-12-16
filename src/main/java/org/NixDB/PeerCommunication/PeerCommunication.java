@@ -23,7 +23,7 @@ public class PeerCommunication {
     private MyHashTable<String, Peer> peers;
 
     private PeerCommunication() {
-        this.peers = new MyHashTable<String, Peer>();
+        this.peers = new MyHashTable<>();
     }
 
     public void addPeer(String name, String ipAddress, int port) {
@@ -101,9 +101,8 @@ public class PeerCommunication {
             socket.setSoTimeout(5000); // 5 seconds timeout
 
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-            Promise promise = (Promise) objectInputStream.readObject();
 
-            return promise;
+            return (Promise) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             // Timeout or other IO or deserialization exception
             return new TimeoutPromise();
