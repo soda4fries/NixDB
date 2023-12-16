@@ -1,5 +1,7 @@
 package org.NixDB.PeerCommunication;
 
+import org.NixDB.Datastructures.MyHashTable;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -11,10 +13,10 @@ import java.util.Scanner;
 
 public class PeerCommunication {
 
-    private Map<String, Peer> peers;
+    private MyHashTable<String, Peer> peers;
 
     public PeerCommunication() {
-        this.peers = new HashMap<>();
+        this.peers = new MyHashTable<String, Peer>();
     }
 
     public void addPeer(String name, String ipAddress, int port) {
