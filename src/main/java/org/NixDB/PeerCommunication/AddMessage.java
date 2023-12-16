@@ -1,7 +1,7 @@
 package org.NixDB.PeerCommunication;
 
 // AddMessage class implementing the Message interface for adding numbers
-class AddMessage implements Message {
+public class AddMessage implements Message {
     private int num1;
     private int num2;
 

@@ -1,6 +1,6 @@
 package org.NixDB.PeerCommunication;
 
-class Peer {
+public class Peer {
     private String name;
     private String ipAddress;
     private int port;

@@ -1,7 +1,7 @@
 package org.NixDB.PeerCommunication;
 
 // PrintMessage class implementing the Message interface for printing a string
-class PrintMessage implements Message {
+public class PrintMessage implements Message {
     private String str;
 
     public PrintMessage(String str) {
