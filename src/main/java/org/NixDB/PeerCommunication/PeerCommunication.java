@@ -7,10 +7,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.UUID;
 
 public class PeerCommunication {
 
-    static PeerCommunication peerCommunicationSingleton;
+    private static PeerCommunication peerCommunicationSingleton;
+    private final UUID uuid;
+
+    private MyHashTable<String, Peer> peers;
 
 
     public static PeerCommunication getInstance() {
@@ -20,13 +24,16 @@ public class PeerCommunication {
         return peerCommunicationSingleton;
     }
 
-    private MyHashTable<String, Peer> peers;
+    public UUID getUuid() {
+        return uuid;
+    }
 
     private PeerCommunication() {
         this.peers = new MyHashTable<>();
+        uuid = UUID.randomUUID();
     }
 
-    public void addPeer(String name, String ipAddress, int port) {
+    public void addPeerToList(String name, String ipAddress, int port) {
         Peer peer = new Peer(name, ipAddress, port);
         peers.put(name, peer);
     }
@@ -46,7 +53,7 @@ public class PeerCommunication {
         new Thread(() -> {
             try {
                 ServerSocket serverSocket = new ServerSocket(port);
-                System.out.println("Server started on port " + port);
+                System.out.println("Server started...");
 
                 while (true) {
                     Socket clientSocket = serverSocket.accept();
@@ -94,6 +101,24 @@ public class PeerCommunication {
             System.out.println("Peer not found: " + peerName);
         }
     }
+
+    public void connectNewPeer(String ipAddress, int port) {
+        String peerUUID;
+            try {
+                Socket socket = new Socket(ipAddress, port);
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                Task connectionTask = new ConnectToPeer(ipAddress,port);
+                // Send the message to the peer
+                objectOutputStream.writeObject(connectionTask);
+                // Wait for promise and handle it
+                connectionTask.Success(waitForAcknowledgment(socket));
+                objectOutputStream.close();
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
+
 
     private Promise waitForAcknowledgment(Socket socket) {
         try {
