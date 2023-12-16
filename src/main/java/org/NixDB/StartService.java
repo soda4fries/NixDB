@@ -48,7 +48,9 @@ public class StartService {
             }
 
             // Ask for function to execute
-            System.out.print("Choose function to execute ( or 'printString' or 'addPeers' or 'printPeer'): ");
+            System.out.print("""
+                    Choose function to execute or 'printString' or 'addPeers' or 'printPeer' or 'addNumbers'):
+                     """);
             String functionName = scanner.nextLine().trim();
 
             switch (functionName) {
@@ -57,7 +59,7 @@ public class StartService {
                     String str = scanner.nextLine().trim();
 
                     // Create and send PrintMessage to the selected peer
-                    peerCommunication.sendMessage(peerName, new PrintMessage(str));
+                    peerCommunication.sendTask(peerName, new PrintTask(str));
                     break;
                 case "addPeers":
                     System.out.print("Enter peer Name: ");
@@ -69,12 +71,26 @@ public class StartService {
                     scanner.nextLine();
 
                     // Create and send AddMessage to the selected peer
-                    peerCommunication.sendMessage(peerName, new AddPeer(newPeerName, newPeerIp, newPeerPort));
+                    peerCommunication.sendTask(peerName, new AddPeer(newPeerName, newPeerIp, newPeerPort));
                     break;
                 case "printPeer":
                     // Create and send PrintMessage to the selected peer
-                    peerCommunication.sendMessage(peerName, new DisplayPeers());
+                    peerCommunication.sendTask(peerName, new DisplayPeers());
                     break;
+                case "addNumbers":
+                    System.out.print("Enter first number: ");
+                    int num1 = scanner.nextInt();
+                    scanner.nextLine(); // Consume the newline character
+
+                    System.out.print("Enter second number: ");
+                    int num2 = scanner.nextInt();
+                    scanner.nextLine(); // Consume the newline character
+
+                    // Create and send AddMessage to the selected peer
+                    peerCommunication.sendTask(peerName, new addNumberTask(num1, num2));
+                    break;
+
+
                 default:
                     System.out.println("Unknown function: " + functionName);
             }

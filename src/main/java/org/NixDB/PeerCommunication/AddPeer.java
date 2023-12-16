@@ -1,6 +1,6 @@
 package org.NixDB.PeerCommunication;
 
-public class AddPeer implements Message {
+public class AddPeer implements Task {
     private String name;
     private String ipAddress;
     private int port;
@@ -12,7 +12,13 @@ public class AddPeer implements Message {
     }
 
     @Override
-    public void perform() {
+    public Promise perform() {
         PeerCommunication.getInstance().addPeer(this.name, this.ipAddress, this.port);
+        return new SuccessPromise();
+    }
+
+    @Override
+    public void Success(Promise returnedPromise) {
+        System.out.println("Successfully added Peer");
     }
 }

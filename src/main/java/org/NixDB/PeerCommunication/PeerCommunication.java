@@ -7,18 +7,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 
 public class PeerCommunication {
 
     static PeerCommunication peerCommunicationSingleton;
 
+
     public static PeerCommunication getInstance() {
         if (peerCommunicationSingleton == null) {
-            new PeerCommunication();
+            peerCommunicationSingleton = new PeerCommunication();
         }
         return peerCommunicationSingleton;
     }
@@ -27,7 +24,6 @@ public class PeerCommunication {
 
     private PeerCommunication() {
         this.peers = new MyHashTable<String, Peer>();
-        peerCommunicationSingleton = this;
     }
 
     public void addPeer(String name, String ipAddress, int port) {
@@ -65,23 +61,30 @@ public class PeerCommunication {
     private void handleClient(Socket clientSocket) {
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
-            Message message = (Message) objectInputStream.readObject();
+            Task task = (Task) objectInputStream.readObject();
 
             // Perform the action based on the message
-            message.perform();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            objectOutputStream.writeObject(task.perform());
+            objectOutputStream.close();
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public void sendMessage(String peerName, Message message) {
+    public void sendTask(String peerName, Task task) {
         Peer peer = peers.get(peerName);
         if (peer != null) {
             try {
                 Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-                objectOutputStream.writeObject(message);
+
+                // Send the message to the peer
+                objectOutputStream.writeObject(task);
+
+                // Wait for promise and handle it
+                task.Success(waitForAcknowledgment(socket));
                 objectOutputStream.close();
                 socket.close();
             } catch (IOException e) {
@@ -89,6 +92,21 @@ public class PeerCommunication {
             }
         } else {
             System.out.println("Peer not found: " + peerName);
+        }
+    }
+
+    private Promise waitForAcknowledgment(Socket socket) {
+        try {
+            // Set a timeout for acknowledgment
+            socket.setSoTimeout(5000); // 5 seconds timeout
+
+            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+            Promise promise = (Promise) objectInputStream.readObject();
+
+            return promise;
+        } catch (IOException | ClassNotFoundException e) {
+            // Timeout or other IO or deserialization exception
+            return new TimeoutPromise();
         }
     }
 
