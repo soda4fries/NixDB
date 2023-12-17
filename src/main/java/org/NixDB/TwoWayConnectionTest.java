@@ -28,7 +28,7 @@ public class TwoWayConnectionTest {
         for (String x: peerCommunication.getPeers().keys()) {
             Peer y = peerCommunication.getPeers().get(x);
             if (y.getIpAddress().equals(ip) && y.getPort()==port) {
-                peerCommunication.sendTask(x, new AddPeer(getLocalIPAddress(), randomPort));
+                peerCommunication.sendTask(new AddPeer(x,getLocalIPAddress(), randomPort));
             }
         }
 

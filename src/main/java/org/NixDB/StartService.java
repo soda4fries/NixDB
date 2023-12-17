@@ -1,5 +1,6 @@
 package org.NixDB;
 
+import org.NixDB.DistributedHash.DHTNode;
 import org.NixDB.PeerCommunication.*;
 
 import java.net.InetAddress;
@@ -28,6 +29,7 @@ public class StartService {
 
 
         Scanner scanner = new Scanner(System.in);
+        DHTNode node = DHTNode.getNodeSingleTon();
 
         while (true) {
             System.out.print("""
@@ -39,9 +41,9 @@ public class StartService {
             +---------------------------------------------+
             Input: 
             """);
-            String command = scanner.nextLine().trim();
+            String commandOrPeer = scanner.nextLine().trim();
 
-            if (command.equalsIgnoreCase("connect")) {
+            if (commandOrPeer.equalsIgnoreCase("connect")) {
                 System.out.print("Enter peer IP address: ");
                 String ipAddress = scanner.nextLine().trim();
 
@@ -50,26 +52,20 @@ public class StartService {
 
                 peerCommunication.connectNewPeer(ipAddress,port);
             } else if
-            (command.equalsIgnoreCase("list")) {
+            (commandOrPeer.equalsIgnoreCase("list")) {
                 peerCommunication.printPeers();
-            } else if (command.equalsIgnoreCase("exit")) {
+            } else if (commandOrPeer.equalsIgnoreCase("exit")) {
                 break;
             } else {
 
                 // Ask for function to execute
                 System.out.print("""
-                        Choose function to execute on peer 'printString' 'addPeers' 'printPeer' 'addNumbers'):
+                        Choose function to execute on peer 'addPeers' 'addNumbers' 'putData' 'getData' 'printNodeData'):
                          """);
                 String functionName = scanner.nextLine().trim();
 
-                switch (functionName) {
-                    case "printString":
-                        System.out.print("Enter string to print: ");
-                        String str = scanner.nextLine().trim();
 
-                        // Create and send PrintMessage to the selected peer
-                        peerCommunication.sendTask(command, new PrintTask(str));
-                        break;
+                switch (functionName) {
                     case "addPeers":
                         System.out.print("Enter peer ip address: ");
                         String newPeerIp = scanner.nextLine().trim();
@@ -78,11 +74,7 @@ public class StartService {
                         scanner.nextLine();
 
                         // Create and send AddMessage to the selected peer
-                        peerCommunication.sendTask(command, new AddPeer(newPeerIp, newPeerPort));
-                        break;
-                    case "printPeer":
-                        // Create and send PrintMessage to the selected peer
-                        peerCommunication.sendTask(command, new DisplayPeers());
+                        peerCommunication.sendTask(new AddPeer(commandOrPeer,newPeerIp, newPeerPort));
                         break;
                     case "addNumbers":
                         System.out.print("Enter first number: ");
@@ -94,9 +86,23 @@ public class StartService {
                         scanner.nextLine(); // Consume the newline character
 
                         // Create and send AddMessage to the selected peer
-                        peerCommunication.sendTask(command, new addNumberTask(num1, num2));
+                        peerCommunication.sendTask(new addNumberTask(commandOrPeer,num1, num2));
                         break;
-
+                    case "putData":
+                        System.out.print("Enter Key: ");
+                        String key = scanner.nextLine();
+                        System.out.print("Enter Value: ");
+                        String value = scanner.nextLine();
+                        node.putData(key,value);
+                        break;
+                    case "getData":
+                        System.out.print("Enter Key: ");
+                        String searchKey = scanner.nextLine();
+                        node.getData(searchKey);
+                        break;
+                    case "printNodeData":
+                        System.out.println(node.getDataStoreAsStr());
+                        break;
 
                     default:
                         System.out.println("Unknown function: " + functionName);

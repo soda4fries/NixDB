@@ -19,10 +19,20 @@ public class ConnectToPeer implements Task {
         return new UUIDpromise(peerCommunication.getUuid());
     }
 
+    @Override
+    public String getReceiverPeerUUID() {
+        return null;
+    }
+
     static class UUIDpromise implements Promise  {
         UUID uuid;
         UUIDpromise(UUID uuid) {
             this.uuid = uuid;
+        }
+
+        @Override
+        public boolean isSuccess() {
+            return true;
         }
     }
 

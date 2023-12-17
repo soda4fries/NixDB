@@ -1,12 +1,16 @@
 package org.NixDB.PeerCommunication;
 
 public class AddPeer implements Task {
+
+    String ReceiverPeerName;
+
     private final String ipAddress;
     private final int port;
 
-    public AddPeer(String ipAddress, int port) {
+    public AddPeer(String ReceiverPeerName,String ipAddress, int port) {
         this.ipAddress = ipAddress;
         this.port = port;
+        this.ReceiverPeerName = ReceiverPeerName;
     }
 
     @Override
@@ -14,6 +18,11 @@ public class AddPeer implements Task {
         PeerCommunication peerCommunication = PeerCommunication.getInstance();
         peerCommunication.connectNewPeer(ipAddress, port);
         return new SuccessPromise();
+    }
+
+    @Override
+    public String getReceiverPeerUUID() {
+        return ReceiverPeerName;
     }
 
     @Override

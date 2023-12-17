@@ -5,9 +5,12 @@ public class addNumberTask implements Task {
     private int num1;
     private int num2;
 
-    public addNumberTask(int num1, int num2) {
+    String ReceiverPeerName;
+
+    public addNumberTask(String ReceiverPeerName, int num1, int num2) {
         this.num1 = num1;
         this.num2 = num2;
+        this.ReceiverPeerName = ReceiverPeerName;
     }
 
     @Override
@@ -17,10 +20,20 @@ public class addNumberTask implements Task {
         return new AddedNumberResult(result);
     }
 
+    @Override
+    public String getReceiverPeerUUID() {
+        return ReceiverPeerName;
+    }
+
     class AddedNumberResult implements Promise {
         int result;
         AddedNumberResult(int result) {
             this.result = result;
+        }
+
+        @Override
+        public boolean isSuccess() {
+            return true;
         }
     }
 

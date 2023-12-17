@@ -7,14 +7,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.*;
 
 public class PeerCommunication {
 
     private static PeerCommunication peerCommunicationSingleton;
     private final UUID uuid;
 
+    private final ExecutorService executorService;
+
     private MyHashTable<String, Peer> peers;
+
 
 
     public static PeerCommunication getInstance() {
@@ -31,6 +37,7 @@ public class PeerCommunication {
     private PeerCommunication() {
         this.peers = new MyHashTable<>();
         uuid = UUID.randomUUID();
+        executorService = Executors.newCachedThreadPool();
     }
 
     public void addPeerToList(String name, String ipAddress, int port) {
@@ -80,8 +87,8 @@ public class PeerCommunication {
         }
     }
 
-    public void sendTask(String peerName, Task task) {
-        Peer peer = peers.get(peerName);
+    public Promise sendTask(Task task) {
+        Peer peer = peers.get(task.getReceiverPeerUUID());
         if (peer != null) {
             try {
                 Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
@@ -91,14 +98,19 @@ public class PeerCommunication {
                 objectOutputStream.writeObject(task);
 
                 // Wait for promise and handle it
-                task.Success(waitForAcknowledgment(socket));
+                Promise promise = waitForAcknowledgment(socket);
+                task.Success(promise);
                 objectOutputStream.close();
                 socket.close();
+                return promise;
             } catch (IOException e) {
                 e.printStackTrace();
+                task.Success(new TimeoutPromise());
+                return new TimeoutPromise();
             }
         } else {
-            System.out.println("Peer not found: " + peerName);
+            System.out.println("Peer not found: " + task.getReceiverPeerUUID());
+            return new TimeoutPromise();
         }
     }
 
@@ -117,6 +129,43 @@ public class PeerCommunication {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+    }
+
+    public boolean sendTasks(List<Task> tasks, int k) {
+        CountDownLatch latch = new CountDownLatch(tasks.size());
+        List<Future<Boolean>> futures = new ArrayList<>();
+
+        for (Task task : tasks) {
+            Future<Boolean> future = executorService.submit(() -> {
+                Promise promise = sendTask(task);
+                latch.countDown();
+                return promise.isSuccess();
+            });
+
+            futures.add(future);
+        }
+
+        try {
+            // Wait for all tasks to complete
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        int successfulCount = 0;
+
+        for (Future<Boolean> future : futures) {
+            try {
+                if (future.get()) {
+                    successfulCount++;
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Return true if at least k tasks were successful
+        return successfulCount >= k;
     }
 
 
