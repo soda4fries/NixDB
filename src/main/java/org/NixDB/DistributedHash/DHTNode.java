@@ -6,6 +6,8 @@ import org.NixDB.PeerCommunication.PeerCommunication;
 import org.NixDB.PeerCommunication.Promise;
 import org.NixDB.PeerCommunication.ReceiveDataTask;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 
@@ -42,7 +44,7 @@ public class DHTNode {
     public String getData(String key) {
         String responsibleNode = findResponsibleNode(key);
         if (responsibleNode.equals(uuid)) {
-            System.out.printf("%s -> %s Data returned from %s", key, dataStore.get(key), uuid);
+            System.out.printf("%s -> %s Data returned from %s\n", key, dataStore.get(key), uuid);
             return dataStore.get(key);
 
         } else {
@@ -56,7 +58,7 @@ public class DHTNode {
         if (responsibleNode.equals(uuid)) {
             // This node is responsible for the data
             dataStore.put(key, data);
-            System.out.printf("<%s,%s> saved", key,data);
+            System.out.printf("<%s,%s> saved\n", key,data);
         } else {
             // Forward the data to the responsible node
             forwardData(responsibleNode, key, data);
@@ -65,12 +67,18 @@ public class DHTNode {
 
     private String findResponsibleNode(String key) {
         String responsibleNode = null;
-        double maxHash = Double.NEGATIVE_INFINITY;
+
         peerCommunication.getPeers().keys().add(uuid);
         List<String> uuidlist = peerCommunication.getPeers().keys();
         uuidlist.add(uuid);
+        Long maxHash = null;
         for (String UUID : uuidlist) {
-            double hash = calculateHash(UUID, key);
+            if (maxHash==null) {
+                maxHash= calculateHash(UUID, key);
+                responsibleNode = UUID;
+                continue;
+            }
+            long hash = calculateHash(UUID, key);
             if (hash > maxHash) {
                 maxHash = hash;
                 responsibleNode = UUID;
@@ -80,21 +88,38 @@ public class DHTNode {
         return responsibleNode;
     }
 
-    private double calculateHash(String nodeUUID, String key) {
-        // Implement your hash function logic here
+    private long calculateHash(String nodeUUID, String key) {
         String concatenated = nodeUUID + key;
-        return (double) concatenated.hashCode();
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = md.digest(concatenated.getBytes());
+
+
+            long hashLong = 0;
+            for (int i = 0; i < Math.min(hashBytes.length, 8); i++) {
+                hashLong <<= 8;
+                hashLong |= hashBytes[i] & 0xFF;
+            }
+            return hashLong;
+
+        } catch (NoSuchAlgorithmException e) {
+
+            e.printStackTrace();
+            return 0L; //
+        }
     }
 
+
     private void forwardData(String destinationNode, String key, String data) {
-        System.out.printf("<%s,%s> forwarded", key,data);
+        System.out.printf("<%s,%s> forwarded\n", key,data);
         peerCommunication.sendTask(new ForwardData(destinationNode, key, data));
     }
 
     private String remoteDataReceiveHelper(String UUID, String key) {
         Promise promise = peerCommunication.sendTask(new ReceiveDataTask(UUID, key));
         if (promise instanceof ReceiveDataTask.ReceivedDataResult x) {
-            System.out.printf("Data returned from ", x.ownerUUID);
+            System.out.printf("Data returned from %s\n", x.ownerUUID);
             return x.getResult();
         } return "Data not Found";
     }

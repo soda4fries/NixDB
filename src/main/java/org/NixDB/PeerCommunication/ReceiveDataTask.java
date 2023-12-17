@@ -47,7 +47,6 @@ public class ReceiveDataTask implements Task {
     @Override
     public void Success(Promise returnedPromise) {
         if (returnedPromise instanceof ReceivedDataResult x) {
-            System.out.printf(" %s -> %s  from server %s", key, x.result, x.ownerUUID);
         } else System.out.println("error");
     }
 }

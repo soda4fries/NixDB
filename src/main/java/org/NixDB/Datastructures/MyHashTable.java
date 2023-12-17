@@ -250,14 +250,17 @@ public class MyHashTable<K, V> implements Iterable<K> {
 
     @Override
     public String toString() {
-
+        int count=0;
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         for (int i = 0; i < capacity; i++) {
             if (table[i] == null) continue;
-            for (Entry<K, V> entry : table[i]) sb.append(entry).append(", ");
+            for (Entry<K, V> entry : table[i]) {
+                sb.append(entry).append("\n, ");
+                count++;
+            }
         }
-        sb.append("}");
+        sb.append("}\nCount: ").append(count);
         return sb.toString();
     }
 

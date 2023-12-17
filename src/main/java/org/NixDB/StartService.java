@@ -5,13 +5,13 @@ import org.NixDB.PeerCommunication.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Scanner;
-
+import java.util.*;
 
 
 public class StartService {
     public static void main(String[] args) {
         PeerCommunication peerCommunication = PeerCommunication.getInstance();
+        Random rand = new Random();
 
         // Initialize the service with a random port
         int randomPort = (int) (Math.random() * 1000) + 8000;
@@ -60,7 +60,7 @@ public class StartService {
 
                 // Ask for function to execute
                 System.out.print("""
-                        Choose function to execute on peer 'addPeers' 'addNumbers' 'putData' 'getData' 'printNodeData'):
+                        Choose function to execute on peer 'addPeers' 'addNumbers' 'putData' 'getData' 'printNodeData' 'distributionTest'):
                          """);
                 String functionName = scanner.nextLine().trim();
 
@@ -104,6 +104,17 @@ public class StartService {
                         System.out.println(node.getDataStoreAsStr());
                         break;
 
+                    case "distributionTest":
+                        List<String> randomStrings = generateRandomStrings(100);
+                        // Assuming you have an instance of DHTNode called 'node'
+                        for (int i = 0; i < randomStrings.size(); i++) {
+                            String keyRandom = "key" + i*rand.nextInt();
+                            String valueRandom = randomStrings.get(i);
+                            node.putData(keyRandom, valueRandom);
+                        }
+                        System.out.println(node.getDataStoreAsStr());
+                        break;
+
                     default:
                         System.out.println("Unknown function: " + functionName);
                 }
@@ -121,6 +132,17 @@ public class StartService {
             e.printStackTrace();
             return "0.0.0.0";
         }
+    }
+
+    public static List<String> generateRandomStrings(int count) {
+        List<String> randomStrings = new ArrayList<>();
+
+        for (int i = 0; i < count; i++) {
+            String randomString = UUID.randomUUID().toString();
+            randomStrings.add(randomString);
+        }
+
+        return randomStrings;
     }
 
 }
