@@ -6,6 +6,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+
+
 public class StartService {
     public static void main(String[] args) {
         PeerCommunication peerCommunication = PeerCommunication.getInstance();
@@ -14,14 +16,14 @@ public class StartService {
         int randomPort = (int) (Math.random() * 1000) + 8000;
         peerCommunication.startServer(randomPort);
 
-        System.out.println("""
-        *--------------------------------------*
-        | Peer to Peer Service Function Started |
-        *--------------------------------------*
-        | Service Initialized on Port: %d      |
-        | Local IP Address: %s                  |
-        *--------------------------------------*
-        """.formatted(randomPort, getLocalIPAddress()));
+        System.out.printf("""
+                *--------------------------------------*
+                | Peer to Peer Service Function Started |
+                *--------------------------------------*
+                | Service Initialized on Port: %d      |
+                | Local IP Address: %s                  |
+                *--------------------------------------*
+                %n""", randomPort, getLocalIPAddress());
 
 
 
