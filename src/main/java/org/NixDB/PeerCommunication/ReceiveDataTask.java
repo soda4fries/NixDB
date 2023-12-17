@@ -3,7 +3,6 @@ package org.NixDB.PeerCommunication;
 
 import org.NixDB.DistributedHash.DHTNode;
 
-// AddMessage class implementing the Message interface for adding numbers
 public class ReceiveDataTask implements Task {
     private String key;
 

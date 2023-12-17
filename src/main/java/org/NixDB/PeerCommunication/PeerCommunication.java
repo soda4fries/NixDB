@@ -77,7 +77,6 @@ public class PeerCommunication {
             ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
             Task task = (Task) objectInputStream.readObject();
 
-            // Perform the action based on the message
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
             objectOutputStream.writeObject(task.perform());
             objectOutputStream.close();
@@ -120,9 +119,7 @@ public class PeerCommunication {
                 Socket socket = new Socket(ipAddress, port);
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 Task connectionTask = new ConnectToPeer(ipAddress,port);
-                // Send the message to the peer
                 objectOutputStream.writeObject(connectionTask);
-                // Wait for promise and handle it
                 connectionTask.Success(waitForAcknowledgment(socket));
                 objectOutputStream.close();
                 socket.close();
@@ -146,7 +143,7 @@ public class PeerCommunication {
         }
 
         try {
-            // Wait for all tasks to complete
+
             latch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -164,21 +161,21 @@ public class PeerCommunication {
             }
         }
 
-        // Return true if at least k tasks were successful
+
         return successfulCount >= k;
     }
 
 
     private Promise waitForAcknowledgment(Socket socket) {
         try {
-            // Set a timeout for acknowledgment
-            socket.setSoTimeout(5000); // 5 seconds timeout
+
+            socket.setSoTimeout(5000);
 
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
 
             return (Promise) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            // Timeout or other IO or deserialization exception
+
             return new TimeoutPromise();
         }
     }
