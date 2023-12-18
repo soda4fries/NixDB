@@ -46,8 +46,8 @@ public class getDataPeerTask implements PeerTask {
 
     @Override
     public void Success(Promise returnedPromise) {
-        if (returnedPromise instanceof getDataResult x) {
-        } else System.out.println("error");
+        if (returnedPromise instanceof getDataResult x) System.out.println("Data => " + x.result);
+            else System.out.println("error");
     }
 }
 

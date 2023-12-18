@@ -22,7 +22,7 @@ public class AddPeer implements PeerTask {
     public Promise perform() {
         PeerCommunication peerCommunication = PeerCommunication.getInstance();
         peerCommunication.sendTask(new ConnectToPeer(ipAddress, port));
-        return new SuccessPromise();
+        return new SuccessPromise("Successfully Connected to peer");
     }
 
     @Override

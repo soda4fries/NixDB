@@ -23,7 +23,7 @@ public class ForwardData implements PeerTask {
     public Promise perform() {
         DHTNode dhtNode = DHTNode.getNodeSingleTon();
         dhtNode.putData(key, value);
-        return new SuccessPromise();
+        return new SuccessPromise("Successfully sent Data");
     }
 
     @Override

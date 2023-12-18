@@ -1,6 +1,7 @@
 package org.NixDB;
 
 import org.NixDB.DistributedHash.DHTNode;
+import org.NixDB.DistributedHash.Zookeeper;
 import org.NixDB.PeerCommunication.*;
 import org.NixDB.PeerTasks.AddPeer;
 import org.NixDB.PeerTasks.addNumberPeerTask;
@@ -39,6 +40,7 @@ public class StartService {
             +---------------------------------------------+
             |  Type 'exit' to finish,                      |
             |  'connect' to add local peers,               |
+            |  'init' to connect many peers
             |  'list' to list all peers,                   |
             |  or enter a peer name.                       |
             +---------------------------------------------+
@@ -56,6 +58,8 @@ public class StartService {
             } else if
             (commandOrPeer.equalsIgnoreCase("list")) {
                 peerCommunication.printPeers();
+            } else if (commandOrPeer.equalsIgnoreCase("init")) {
+                Zookeeper.initNodesConnections();
             } else if (commandOrPeer.equalsIgnoreCase("exit")) {
                 break;
             } else {
@@ -116,7 +120,6 @@ public class StartService {
                         }
                         System.out.println(node.getDataStoreAsStr());
                         break;
-
                     default:
                         System.out.println("Unknown function: " + functionName);
                 }
