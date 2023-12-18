@@ -1,14 +1,15 @@
-package org.NixDB.PeerCommunication;
+package org.NixDB.PeerTasks;
 
 
 import org.NixDB.DistributedHash.DHTNode;
+import org.NixDB.PeerCommunication.Promise;
 
-public class ReceiveDataTask implements Task {
-    private String key;
+public class ReceiveDataPeerTask implements PeerTask {
+    private final String key;
 
     String receiverPeerUUID;
 
-    public ReceiveDataTask(String receiverPeerUUID, String key) {
+    public ReceiveDataPeerTask(String receiverPeerUUID, String key) {
         this.key = key;
         this.receiverPeerUUID = receiverPeerUUID;
     }

@@ -1,13 +1,14 @@
-package org.NixDB.PeerCommunication;
+package org.NixDB.PeerTasks;
 
-// AddMessage class implementing the Message interface for adding numbers
-public class addNumberTask implements Task {
-    private int num1;
-    private int num2;
+import org.NixDB.PeerCommunication.Promise;
+
+public class addNumberPeerTask implements PeerTask {
+    private final int num1;
+    private final int num2;
 
     String ReceiverPeerName;
 
-    public addNumberTask(String ReceiverPeerName, int num1, int num2) {
+    public addNumberPeerTask(String ReceiverPeerName, int num1, int num2) {
         this.num1 = num1;
         this.num2 = num2;
         this.ReceiverPeerName = ReceiverPeerName;

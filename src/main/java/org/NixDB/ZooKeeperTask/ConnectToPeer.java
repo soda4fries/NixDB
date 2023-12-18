@@ -1,14 +1,18 @@
-package org.NixDB.PeerCommunication;
+package org.NixDB.ZooKeeperTask;
+
+
+import org.NixDB.PeerCommunication.PeerCommunication;
+import org.NixDB.PeerCommunication.Promise;
 
 import java.util.UUID;
 
-public class ConnectToPeer implements Task {
-    String ipAddress;
-    int port;
+public class ConnectToPeer implements ZookeeperTask {
+    private final String ipAddress;
+    private final int port;
 
 
 
-    ConnectToPeer(String ipAddress, int port) {
+    public ConnectToPeer(String ipAddress, int port) {
         this.ipAddress = ipAddress;
         this.port = port;
     }
@@ -20,12 +24,17 @@ public class ConnectToPeer implements Task {
     }
 
     @Override
-    public String getReceiverPeerUUID() {
-        return null;
+    public String getIpAddress() {
+        return ipAddress;
     }
 
-    static class UUIDpromise implements Promise  {
-        UUID uuid;
+    @Override
+    public int getPort() {
+        return port;
+    }
+
+    static public class UUIDpromise implements Promise  {
+        public UUID uuid;
         UUIDpromise(UUID uuid) {
             this.uuid = uuid;
         }

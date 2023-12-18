@@ -1,8 +1,11 @@
-package org.NixDB.PeerCommunication;
+package org.NixDB.PeerTasks;
 
 import org.NixDB.DistributedHash.DHTNode;
+import org.NixDB.PeerCommunication.Promise;
+import org.NixDB.PeerCommunication.SuccessPromise;
+import org.NixDB.PeerTasks.PeerTask;
 
-public class ForwardData implements Task {
+public class ForwardData implements PeerTask {
 
     String ReceiverPeerUUID;
 

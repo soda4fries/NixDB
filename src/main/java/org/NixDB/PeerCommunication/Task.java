@@ -2,13 +2,7 @@ package org.NixDB.PeerCommunication;
 
 import java.io.Serializable;
 
-
-interface Task extends Serializable {
-    Promise perform();
-    String getReceiverPeerUUID();
-
-
-
+public interface Task extends Serializable {
     void Success(Promise returnedPromise);
+    Promise perform();
 }
-

@@ -1,6 +1,8 @@
 package org.NixDB.PeerCommunication;
 
 import org.NixDB.Datastructures.MyHashTable;
+import org.NixDB.PeerTasks.PeerTask;
+import org.NixDB.ZooKeeperTask.ZookeeperTask;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,7 +21,7 @@ public class PeerCommunication {
 
     private final ExecutorService executorService;
 
-    private MyHashTable<String, Peer> peers;
+    private final MyHashTable<String, Peer> peers;
 
 
 
@@ -58,10 +60,8 @@ public class PeerCommunication {
 
     public void startServer(int port) {
         new Thread(() -> {
-            try {
-                ServerSocket serverSocket = new ServerSocket(port);
+            try (ServerSocket serverSocket = new ServerSocket(port)){
                 System.out.println("Server started...");
-
                 while (true) {
                     Socket clientSocket = serverSocket.accept();
                     new Thread(() -> handleClient(clientSocket)).start();
@@ -87,46 +87,44 @@ public class PeerCommunication {
     }
 
     public Promise sendTask(Task task) {
-        Peer peer = peers.get(task.getReceiverPeerUUID());
-        if (peer != null) {
-            try {
-                Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+        String ipAddress;
+        int port;
 
-                // Send the message to the peer
-                objectOutputStream.writeObject(task);
-
-                // Wait for promise and handle it
-                Promise promise = waitForAcknowledgment(socket);
-                task.Success(promise);
-                objectOutputStream.close();
-                socket.close();
-                return promise;
-            } catch (IOException e) {
-                e.printStackTrace();
-                task.Success(new TimeoutPromise());
+        if (task instanceof ZookeeperTask x) {
+            ipAddress = x.getIpAddress();
+            port = x.getPort();
+        } else if (task instanceof PeerTask x) {
+            Peer peer = peers.get(x.getReceiverPeerUUID());
+            if (peer != null) {
+                ipAddress = peer.getIpAddress();
+                port = peer.getPort();
+            } else {
+                System.out.println("Peer not found: " + x.getReceiverPeerUUID());
                 return new TimeoutPromise();
             }
-        } else {
-            System.out.println("Peer not found: " + task.getReceiverPeerUUID());
+        } else throw new RuntimeException();
+
+        try {
+            Socket socket = new Socket(ipAddress, port);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            // Send the message to the peer
+            objectOutputStream.writeObject(task);
+
+            // Wait for promise and handle it
+            Promise promise = waitForAcknowledgment(socket);
+            task.Success(promise);
+            objectOutputStream.close();
+            socket.close();
+            return promise;
+        } catch (IOException e) {
+            e.printStackTrace();
+            task.Success(new TimeoutPromise());
             return new TimeoutPromise();
         }
     }
 
-    public void connectNewPeer(String ipAddress, int port) {
-        String peerUUID;
-            try {
-                Socket socket = new Socket(ipAddress, port);
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-                Task connectionTask = new ConnectToPeer(ipAddress,port);
-                objectOutputStream.writeObject(connectionTask);
-                connectionTask.Success(waitForAcknowledgment(socket));
-                objectOutputStream.close();
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-    }
+
+
 
     public boolean sendTasks(List<Task> tasks, int k) {
         CountDownLatch latch = new CountDownLatch(tasks.size());

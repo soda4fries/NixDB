@@ -1,6 +1,11 @@
-package org.NixDB.PeerCommunication;
+package org.NixDB.PeerTasks;
 
-public class AddPeer implements Task {
+import org.NixDB.ZooKeeperTask.ConnectToPeer;
+import org.NixDB.PeerCommunication.PeerCommunication;
+import org.NixDB.PeerCommunication.Promise;
+import org.NixDB.PeerCommunication.SuccessPromise;
+
+public class AddPeer implements PeerTask {
 
     String ReceiverPeerName;
 
@@ -16,7 +21,7 @@ public class AddPeer implements Task {
     @Override
     public Promise perform() {
         PeerCommunication peerCommunication = PeerCommunication.getInstance();
-        peerCommunication.connectNewPeer(ipAddress, port);
+        peerCommunication.sendTask(new ConnectToPeer(ipAddress, port));
         return new SuccessPromise();
     }
 

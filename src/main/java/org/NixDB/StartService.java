@@ -2,6 +2,9 @@ package org.NixDB;
 
 import org.NixDB.DistributedHash.DHTNode;
 import org.NixDB.PeerCommunication.*;
+import org.NixDB.PeerTasks.AddPeer;
+import org.NixDB.PeerTasks.addNumberPeerTask;
+import org.NixDB.ZooKeeperTask.ConnectToPeer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -39,7 +42,7 @@ public class StartService {
             |  'list' to list all peers,                   |
             |  or enter a peer name.                       |
             +---------------------------------------------+
-            Input: 
+            Input:
             """);
             String commandOrPeer = scanner.nextLine().trim();
 
@@ -49,8 +52,7 @@ public class StartService {
 
                 System.out.print("Enter peer port: ");
                 int port = scanner.nextInt();
-
-                peerCommunication.connectNewPeer(ipAddress,port);
+                peerCommunication.sendTask(new ConnectToPeer(ipAddress, port));
             } else if
             (commandOrPeer.equalsIgnoreCase("list")) {
                 peerCommunication.printPeers();
@@ -86,7 +88,7 @@ public class StartService {
                         scanner.nextLine(); // Consume the newline character
 
                         // Create and send AddMessage to the selected peer
-                        peerCommunication.sendTask(new addNumberTask(commandOrPeer,num1, num2));
+                        peerCommunication.sendTask(new addNumberPeerTask(commandOrPeer,num1, num2));
                         break;
                     case "putData":
                         System.out.print("Enter Key: ");

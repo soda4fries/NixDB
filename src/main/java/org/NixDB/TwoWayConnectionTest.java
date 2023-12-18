@@ -1,8 +1,9 @@
 package org.NixDB;
 
-import org.NixDB.PeerCommunication.AddPeer;
+import org.NixDB.PeerTasks.AddPeer;
 import org.NixDB.PeerCommunication.Peer;
 import org.NixDB.PeerCommunication.PeerCommunication;
+import org.NixDB.ZooKeeperTask.ConnectToPeer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -23,7 +24,7 @@ public class TwoWayConnectionTest {
         System.out.println("Enter port");
         int port = scanner.nextInt();
 
-        peerCommunication.connectNewPeer(ip, port);
+        peerCommunication.sendTask(new ConnectToPeer(ip, port));
 
         for (String x: peerCommunication.getPeers().keys()) {
             Peer y = peerCommunication.getPeers().get(x);
