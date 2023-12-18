@@ -1,10 +1,11 @@
-package org.NixDB.ZooKeeperTask;
+package org.NixDB;
 
 import org.NixDB.DistributedHash.DHTNode;
 import org.NixDB.DistributedHash.Zookeeper;
 import org.NixDB.PeerCommunication.PeerCommunication;
 import org.NixDB.PeerTasks.AddPeer;
 import org.NixDB.PeerTasks.addNumberPeerTask;
+import org.NixDB.ZooKeeperTask.ConnectToPeer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
