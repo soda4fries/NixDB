@@ -4,7 +4,7 @@ import org.NixDB.Datastructures.MyHashTable;
 import org.NixDB.PeerTasks.ForwardData;
 import org.NixDB.PeerCommunication.PeerCommunication;
 import org.NixDB.PeerCommunication.Promise;
-import org.NixDB.PeerTasks.ReceiveDataPeerTask;
+import org.NixDB.PeerTasks.getDataPeerTask;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -117,8 +117,8 @@ public class DHTNode {
     }
 
     private String remoteDataReceiveHelper(String UUID, String key) {
-        Promise promise = peerCommunication.sendTask(new ReceiveDataPeerTask(UUID, key));
-        if (promise instanceof ReceiveDataPeerTask.ReceivedDataResult x) {
+        Promise promise = peerCommunication.sendTask(new getDataPeerTask(UUID, key));
+        if (promise instanceof getDataPeerTask.getDataResult x) {
             System.out.printf("Data returned from %s\n", x.ownerUUID);
             return x.getResult();
         } return "Data not Found";

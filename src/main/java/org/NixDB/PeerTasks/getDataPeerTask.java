@@ -4,12 +4,12 @@ package org.NixDB.PeerTasks;
 import org.NixDB.DistributedHash.DHTNode;
 import org.NixDB.PeerCommunication.Promise;
 
-public class ReceiveDataPeerTask implements PeerTask {
+public class getDataPeerTask implements PeerTask {
     private final String key;
 
     String receiverPeerUUID;
 
-    public ReceiveDataPeerTask(String receiverPeerUUID, String key) {
+    public getDataPeerTask(String receiverPeerUUID, String key) {
         this.key = key;
         this.receiverPeerUUID = receiverPeerUUID;
     }
@@ -18,7 +18,7 @@ public class ReceiveDataPeerTask implements PeerTask {
     public Promise perform() {
         DHTNode node = DHTNode.getNodeSingleTon();
         String Data = node.getData(key);
-        return new ReceivedDataResult(Data, node.getUUID());
+        return new getDataResult(Data, node.getUUID());
     }
 
     @Override
@@ -26,10 +26,10 @@ public class ReceiveDataPeerTask implements PeerTask {
         return receiverPeerUUID;
     }
 
-    public static class ReceivedDataResult implements Promise {
+    public static class getDataResult implements Promise {
         String result;
         public String ownerUUID;
-        ReceivedDataResult(String Data, String ownerUUID) {
+        getDataResult(String Data, String ownerUUID) {
             this.result = Data;
             this.ownerUUID = ownerUUID;
         }
@@ -46,7 +46,7 @@ public class ReceiveDataPeerTask implements PeerTask {
 
     @Override
     public void Success(Promise returnedPromise) {
-        if (returnedPromise instanceof ReceivedDataResult x) {
+        if (returnedPromise instanceof getDataResult x) {
         } else System.out.println("error");
     }
 }
