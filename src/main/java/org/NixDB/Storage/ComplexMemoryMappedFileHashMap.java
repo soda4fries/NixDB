@@ -51,6 +51,28 @@ public class ComplexMemoryMappedFileHashMap {
         }
     }
 
+    private void loadHashMapFromDisk() throws IOException {
+        try (FileInputStream fileInputStream = new FileInputStream(fileChannel.toString());
+             DataInputStream dataInputStream = new DataInputStream(fileInputStream)) {
+
+            while (dataInputStream.available() > 0) {
+                // Read Key and offset
+                byte[] keyBytes = new byte[MAX_KEY_LENGTH];
+                dataInputStream.read(keyBytes);
+                String key = new String(keyBytes, StandardCharsets.UTF_8).trim();
+
+                long offset = dataInputStream.readLong();
+
+                // Put if it's not null
+                if (!key.isEmpty()) {
+                    hashMap.put(key, nextAvailableIndex);
+                    offsetMap.put(nextAvailableIndex, offset);
+                    nextAvailableIndex++;
+                }
+            }
+        }
+    }
+
     public void put(String key, String value) {
         if (key.length() > MAX_KEY_LENGTH || value.length() > MAX_VALUE_LENGTH) {
             throw new IllegalArgumentException("Key or value exceeds maximum length");
