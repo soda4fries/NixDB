@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 
 public class MyLinkedList<E> implements Iterable<E> {
     Node<E> head;
+    int size = 0;
 
     @Override
     public Iterator<E> iterator() {
@@ -19,8 +20,12 @@ public class MyLinkedList<E> implements Iterable<E> {
             current = next;
         }
         head.next = null;
+        size = 0;
     }
 
+    public int size() {
+        return size;
+    }
 
 
     static class Node<E> {
@@ -47,6 +52,7 @@ public class MyLinkedList<E> implements Iterable<E> {
             Node newNode = new Node(item, head);
             head = newNode;
         }
+        size++;
     }
 
     public E get(E item) {
@@ -55,6 +61,19 @@ public class MyLinkedList<E> implements Iterable<E> {
             current = current.next;
         }
         if (current.next == null) throw new NoSuchElementException();
+        return current.item;
+    }
+
+    public E get(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+
+        Node<E> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+
         return current.item;
     }
 
@@ -80,6 +99,7 @@ public class MyLinkedList<E> implements Iterable<E> {
 
         E itemCopy = current.next.item;
         current.next = current.next.next;
+        size--;
         return itemCopy;
     }
 

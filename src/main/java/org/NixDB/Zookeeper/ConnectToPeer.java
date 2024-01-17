@@ -1,4 +1,4 @@
-package org.NixDB.ZooKeeperTask;
+package org.NixDB.Zookeeper;
 
 
 import org.NixDB.PeerCommunication.PeerCommunication;
@@ -15,6 +15,15 @@ public class ConnectToPeer implements ZookeeperTask {
     public ConnectToPeer(String ipAddress, int port) {
         this.ipAddress = ipAddress;
         this.port = port;
+    }
+
+    @Override
+    public void performOnSuccess(Promise returnedPromise) {
+        if (returnedPromise instanceof UUIDpromise x) {
+            PeerCommunication peerCommunication = PeerCommunication.getInstance();
+            peerCommunication.addPeerToList(x.uuid.toString(), ipAddress, port);
+            System.out.println("Connected to Peer with UUID " + x.uuid.toString());
+        }
     }
 
     @Override
@@ -45,14 +54,7 @@ public class ConnectToPeer implements ZookeeperTask {
         }
     }
 
-    @Override
-    public void Success(Promise returnedPromise) {
-        if (returnedPromise instanceof UUIDpromise x) {
-            PeerCommunication peerCommunication = PeerCommunication.getInstance();
-            peerCommunication.addPeerToList(x.uuid.toString(), ipAddress, port);
-            System.out.println("Connected to Peer with UUID " + x.uuid.toString());
-        }
-    }
+
 
 
 }

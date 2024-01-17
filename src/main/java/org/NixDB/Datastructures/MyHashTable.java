@@ -1,5 +1,5 @@
 package org.NixDB.Datastructures;
-
+//for the for each loop
 import java.util.*;
 
 @SuppressWarnings("unchecked")
