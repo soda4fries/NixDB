@@ -1,19 +1,21 @@
 package org.NixDB.Client;
 
 
+import org.NixDB.DataStore.Table;
+import org.NixDB.Datastructures.MyHashTable;
+import org.NixDB.Datastructures.MyLinkedList;
 import org.NixDB.PeerCommunication.PeerCommunication;
 import org.NixDB.PeerCommunication.Promise;
+import org.NixDB.Zookeeper.TablesEntry;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 public class NixDBConnection<K, V> {
 
     String tableName;
     String ZooKeeperIpAddress;
     int ZooKeeperPort;
-    private Class<K> keyType;
-    private Class<V> valueType;
+    private final Class<K> keyType;
+    private final Class<V> valueType;
 
     String clientId;
     String designatedNodeIpAddress;
@@ -38,6 +40,14 @@ public class NixDBConnection<K, V> {
             designatedNodePort = x.designatedPeerPort;
         }
     }
+    public static MyLinkedList<TablesEntry> getTableData(String ZooKeeperIpAddress, int ZooKeeperPort) {
+        Promise promise = PeerCommunication.getInstance().sendTask(new GetTableNamesTask(ZooKeeperIpAddress, ZooKeeperPort));
+        if (promise instanceof Value x) {
+            return (MyLinkedList<TablesEntry>) x.getValue();
+        } else {
+            return null;
+        }
+    }
 
     public void put(K key, V value) {
         PeerCommunication.getInstance().sendTask(new PutData(designatedNodeIpAddress, designatedNodePort, tableName, key, value));
@@ -52,11 +62,39 @@ public class NixDBConnection<K, V> {
         }
     }
 
+    public MyHashTable<K,V> getAll() {
+        MyHashTable<K, V> data = new MyHashTable<>();
+        Promise promise = PeerCommunication.getInstance().sendTask(new GetAllData(designatedNodeIpAddress, designatedNodePort, tableName));
+        if (promise instanceof Value x) {
+            MyLinkedList<Table> tables = (MyLinkedList<Table>) x.getValue();
+            for (Table table : tables) {
+                for (Object key : table.getData().keys()) {
+                    K key1 = (K) key;
+                    V value = (V) table.getData().get(key1);
+                    data.put(key1, value);
+                }
+            }
+        }
+        return data;
+    }
+
     public void remove(K key) {
         PeerCommunication.getInstance().sendTask(new RemoveData(designatedNodeIpAddress, designatedNodePort, tableName, key));
     }
 
+    public String getDesignatedNodeIpAddress() {
+        return designatedNodeIpAddress;
+    }
 
+    public int getDesignatedNodePort() {
+        return designatedNodePort;
+    }
 
+    public String getZooKeeperIpAddress() {
+        return ZooKeeperIpAddress;
+    }
 
+    public int getZooKeeperPort() {
+        return ZooKeeperPort;
+    }
 }

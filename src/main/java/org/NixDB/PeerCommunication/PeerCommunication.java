@@ -117,6 +117,11 @@ public class PeerCommunication {
             port = x.getPort();
         } else if (task instanceof PeerTask x) {
             Peer peer = peers.get(x.getReceiverPeerUUID());
+            if (x.getReceiverPeerUUID().equals(uuid.toString())) {
+                Promise promise = task.perform();
+                task.performOnSuccess(promise);
+                return promise;
+            }
             if (peer != null) {
                 ipAddress = peer.getIpAddress();
                 port = peer.getPort();

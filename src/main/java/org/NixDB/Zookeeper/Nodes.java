@@ -1,9 +1,9 @@
 package org.NixDB.Zookeeper;
 
 public class Nodes {
-    private String uuid;
-    private String ip;
-    private int port;
+    private final String uuid;
+    private final String ip;
+    private final int port;
 
     Nodes(String uuid, String ip, int port) {
         this.uuid = uuid;
@@ -13,7 +13,7 @@ public class Nodes {
 
     public String getUuid() {
         return uuid;
-    };
+    }
 
     public String getIp() {
         return ip;

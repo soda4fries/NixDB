@@ -3,7 +3,7 @@ package org.NixDB.Datastructures;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class MyLinkedList<E> implements Iterable<E> {
+public class MyLinkedList<E> implements Iterable<E>, java.io.Serializable {
     Node<E> head;
     int size = 0;
 
@@ -28,7 +28,7 @@ public class MyLinkedList<E> implements Iterable<E> {
     }
 
 
-    static class Node<E> {
+    static class Node<E> implements java.io.Serializable {
         E item;
         Node<E> next;
 

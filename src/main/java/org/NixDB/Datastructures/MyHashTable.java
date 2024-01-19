@@ -1,9 +1,10 @@
 package org.NixDB.Datastructures;
 //for the for each loop
+import java.io.Serializable;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
-public class MyHashTable<K, V> implements Iterable<K> {
+public class MyHashTable<K, V> implements Iterable<K>, Serializable {
 
     private static final int DEFAULT_CAPACITY = 3;
     private static final double DEFAULT_LOAD_FACTOR = 0.75;
@@ -17,7 +18,7 @@ public class MyHashTable<K, V> implements Iterable<K> {
     }
 
 
-    static class Entry<K, V> {
+    static class Entry<K, V> implements Serializable {
 
         int hash;
         K key;

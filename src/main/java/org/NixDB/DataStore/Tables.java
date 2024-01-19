@@ -21,6 +21,9 @@ public class Tables implements Serializable {
         return instance;
     }
 
+    public Table getTable(String tableName) {
+        return tables.get(tableName);
+    }
     public Object getValue(String tableName, Object key) {
         return tables.get(tableName).data.get(key);
     }
@@ -60,9 +63,3 @@ public class Tables implements Serializable {
     }
 }
 
- class Table implements Serializable {
-    String name;
-    Class keyType;
-    Class valueType;
-    MyHashTable<Object, Object> data;
-}

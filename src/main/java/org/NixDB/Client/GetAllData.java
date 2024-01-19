@@ -1,34 +1,39 @@
 package org.NixDB.Client;
 
+import org.NixDB.DataStore.Table;
+import org.NixDB.DataStore.Tables;
+import org.NixDB.Datastructures.MyLinkedList;
 import org.NixDB.Node.DHTNode;
 import org.NixDB.PeerCommunication.Promise;
 import org.NixDB.Zookeeper.ZookeeperTask;
 
-public class RemoveData implements ZookeeperTask {
+import java.util.LinkedList;
+import java.util.Map;
+
+public class GetAllData implements ZookeeperTask {
     String designatedNodeIp;
     int designatedNodePort;
-
     String tableName;
-    Object key;
 
-    RemoveData(String designatedNodeIp, int designatedNodePort, String tableName, Object key) {
+    public GetAllData(String designatedNodeIp, int designatedNodePort, String tableName) {
         this.designatedNodeIp = designatedNodeIp;
         this.designatedNodePort = designatedNodePort;
         this.tableName = tableName;
-        this.key = key;
     }
 
     @Override
     public void performOnSuccess(Promise returnedPromise) {
-
+        // Perform any necessary actions on success
     }
 
     @Override
     public Promise perform() {
-
-        DHTNode.getNodeSingleTon().remove(tableName, key);
-        System.out.println("Removed data successfully on Node" + designatedNodeIp + ":" + designatedNodePort);
-        return () -> true;
+        MyLinkedList<Table> tables = DHTNode.getNodeSingleTon().getAll(tableName);
+        if (tables == null) {
+            System.out.println("Failed to get all data from Node" + designatedNodeIp + ":" + designatedNodePort);
+            return () -> false;
+        }
+        return new Value(tables);
     }
 
     @Override

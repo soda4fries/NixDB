@@ -1,11 +1,10 @@
 package org.NixDB.Node;
 
+import org.NixDB.DataStore.Table;
+import org.NixDB.Datastructures.MyLinkedList;
 import org.NixDB.PeerCommunication.PeerCommunication;
 import org.NixDB.PeerCommunication.Promise;
-import org.NixDB.PeerTasks.getPeerDataResult;
-import org.NixDB.PeerTasks.getPeerDataTask;
-import org.NixDB.PeerTasks.putPeerDataTask;
-import org.NixDB.PeerTasks.removePeerDataTask;
+import org.NixDB.PeerTasks.*;
 
 
 import java.security.MessageDigest;
@@ -41,26 +40,48 @@ public class DHTNode {
 
     public void put(String tableName, Object key, Object value) {
         List<String> responsibleNodes = findResponsibleNodes(key.toString());
-        for (String nodeUUID : responsibleNodes) {
-            peerCommunication.sendTask(new putPeerDataTask(nodeUUID, tableName, key, value));
-        }
+        //for (String nodeUUID : responsibleNodes) {
+        //    peerCommunication.sendTask(new putPeerDataTask(nodeUUID, tableName, key, value));
+        //}
+        peerCommunication.sendTask(new putPeerDataTask(responsibleNodes.get(0), tableName, key, value));
     }
 
     public Object get(String tableName, Object key) {
         List<String> responsibleNodes = findResponsibleNodes(key.toString());
-        Promise promise = peerCommunication.sendTask(new getPeerDataTask(responsibleNodes.get(0), tableName, key));
-        if (promise.isSuccess()) {
-            return ((getPeerDataResult) promise).getValue();
-        } else {
-            return null;
+        Promise promise1 = peerCommunication.sendTask(new getPeerDataTask(responsibleNodes.get(0), tableName, key));
+      //  Promise promise2 = peerCommunication.sendTask(new getPeerDataTask(responsibleNodes.get(1), tableName, key));
+     //   if (promise1.isSuccess() && promise2.isSuccess()) {
+     //       if (((getPeerDataResult) promise1).getValue().equals(((getPeerDataResult) promise2).getValue())) {
+    //            return ((getPeerDataResult) promise1).getValue();
+    //        } else {
+    //            System.out.println("Data is inconsistent");
+     //           System.out.println("one node has " + ((getPeerDataResult) promise1) + " has " + ((getPeerDataResult) promise1).getValue());
+      //          System.out.println("other node has " + ((getPeerDataResult) promise2) + " has " + ((getPeerDataResult) promise2).getValue());
+       //         return null;
+       //     }
+     //   }
+     //   return null;
+        return ((getPeerDataResult) promise1).getValue();
+    }
+
+    public MyLinkedList<Table> getAll(String tableName) {
+        MyLinkedList<Table> tables = new MyLinkedList<>();
+        for (String nodeUUID : peerCommunication.getPeers().keys()) {
+            Promise promise = peerCommunication.sendTask(new getPeerAllDataTask(nodeUUID, tableName));
+            if (promise.isSuccess()) {
+                tables.add((Table) ((getPeerDataResult) promise).getValue());
+            }
         }
+        return tables;
     }
 
     public void remove(String tableName, Object key) {
         List<String> responsibleNodes = findResponsibleNodes(key.toString());
-        for (String nodeUUID : responsibleNodes) {
-            peerCommunication.sendTask(new removePeerDataTask(nodeUUID, tableName, key));
-        }
+    //    System.out.println("responsible nodes are " + responsibleNodes);
+    //    for (String nodeUUID : responsibleNodes) {
+    //        peerCommunication.sendTask(new removePeerDataTask(nodeUUID, tableName, key));
+    //    }
+        peerCommunication.sendTask(new removePeerDataTask(responsibleNodes.get(0), tableName, key));
     }
 
 

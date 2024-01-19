@@ -47,7 +47,7 @@ public class CreateTableTask implements ZookeeperTask {
         return peerPort;
     }
 
-    private class CreateTableResult implements Promise {
+    private static class CreateTableResult implements Promise {
         boolean success;
         String uuid;
         public CreateTableResult(boolean b, String NodeUuid) {

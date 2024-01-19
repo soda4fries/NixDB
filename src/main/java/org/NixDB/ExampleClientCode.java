@@ -1,7 +1,9 @@
 package org.NixDB;
 
 import org.NixDB.Client.NixDBConnection;
+import org.NixDB.Zookeeper.TablesEntry;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ExampleClientCode {
@@ -28,6 +30,12 @@ public class ExampleClientCode {
                 connection.remove(commandParts[1]);
             } else if (commandParts[0].equals("exit")) {
                 System.exit(0);
+            } else if (commandParts[0].equals("getAll")) {
+                System.out.println(connection.getAll());
+            } else if (commandParts[0].equals("getTableNames")) {
+               for (TablesEntry tableName1 : Objects.requireNonNull(NixDBConnection.getTableData(input, port))) {
+                     System.out.println(tableName1);
+               }
             }
         }
 

@@ -1,7 +1,7 @@
 package org.NixDB.PeerCommunication;
 
 public class SuccessPromise implements Promise {
-    private String message;
+    private final String message;
 
     public SuccessPromise(String message) {
         this.message = message;

@@ -32,6 +32,6 @@ public class removePeerDataTask implements PeerTask{
 
     @Override
     public String getReceiverPeerUUID() {
-        return null;
+        return peerUUID;
     }
 }
