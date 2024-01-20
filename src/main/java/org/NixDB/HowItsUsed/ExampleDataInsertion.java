@@ -2,6 +2,8 @@ package org.NixDB.HowItsUsed;
 
 import org.NixDB.Client.NixDBConnection;
 
+import java.util.Scanner;
+
 public class ExampleDataInsertion {
     public static void main(String[] args) {
 
@@ -21,30 +23,20 @@ public class ExampleDataInsertion {
         System.out.println("Customer Connection Designated Node Port: ");
         System.out.println(customerConnection.getDesignatedNodePort());
 
+        System.out.println("Inserting Data");
         customerConnection.put("C001", new Customer("C001", "John Doe", 25, "john@example.com"));
         customerConnection.put("C002", new Customer("C002", "Alice Smith", 30, "alice@example.com"));
         customerConnection.put("C003", new Customer("C003", "AHHH Wrong", 30, "alice@example.com"));
 
+        System.out.println("Removeing one data point");
         customerConnection.remove("C003");
+
+        System.out.println("Inserting Data");
         transactionConnection.put("T001", new Transaction("T001", "C001", 100.50, "2022-01-01"));
         transactionConnection.put("T002", new Transaction("T002", "C001", 50.75, "2022-01-02"));
         transactionConnection.put("T003", new Transaction("T003", "C002", 75.20, "2022-01-03"));
-
-        distributionTest(distributionTest);
-        distributionTest2(distributionTest2);
-
-    }
-
-    private static void distributionTest(NixDBConnection<Integer, Double> distributionTest) {
-        for (int i = 0; i < 100; i++) {
-            distributionTest.put(i, Math.random());
-        }
-    }
-
-    private static void distributionTest2(NixDBConnection<Double, Integer> distributionTest) {
-        for (int i = 0; i < 100; i++) {
-            distributionTest.put(Math.random(), i);
-        }
+        System.out.println("Data Inserted");
+        new Scanner(System.in).nextLine();
     }
 
 

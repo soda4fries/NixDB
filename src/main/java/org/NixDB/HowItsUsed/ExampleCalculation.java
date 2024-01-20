@@ -6,12 +6,14 @@ import org.NixDB.Datastructures.MyHashTable;
 import org.NixDB.Datastructures.MyLinkedList;
 import org.NixDB.Zookeeper.TablesEntry;
 
-import java.util.Objects;
+import java.util.Scanner;
 
 
 public class ExampleCalculation {
     public static void main(String[] args) {
 
+
+        //Print all the tables in the database
         MyLinkedList<TablesEntry> tables = NixDBConnection.getTableData("localhost", 2181);
         for (TablesEntry table : tables) {
             System.out.println(table);
@@ -25,7 +27,7 @@ public class ExampleCalculation {
         performCalculations(customerConnection, transactionConnection);
 
 
-
+        // Printing all the data in the database
         MyHashTable<String, Customer> customers = customerConnection.getAll();
         for (Customer customer : customers.values()) {
             System.out.println(customer);
@@ -34,11 +36,7 @@ public class ExampleCalculation {
         for (Transaction transaction : transactions.values()) {
             System.out.println(transaction);
         }
-
-        NixDBConnection<Integer, Double> distributionTest = new NixDBConnection<>("DistributionTest1", "localhost", 2181, Integer.class, Double.class);
-        NixDBConnection<Integer, Double> distributionTest2 = new NixDBConnection<>("DistributionTest2", "localhost", 2181, Integer.class, Double.class);
-        distributionTest2.getAll();
-        distributionTest.getAll();
+        new Scanner(System.in).nextLine();
 
     }
 
@@ -48,8 +46,6 @@ public class ExampleCalculation {
         String customerId = "C001";
         double totalTransactionAmount = calculateTotalTransactionAmount(customerId, transactionConnection);
         System.out.println("Total transaction amount for Customer " + customerId + ": " + totalTransactionAmount);
-
-        // Add more calculations or operations as needed
     }
 
     private static double calculateTotalTransactionAmount(String customerId,
