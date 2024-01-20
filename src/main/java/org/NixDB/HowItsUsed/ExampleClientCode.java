@@ -17,6 +17,8 @@ public class ExampleClientCode {
         NixDBConnection<String, String> connection = new NixDBConnection<>(tableName, input, port, String.class, String.class);
         while (true) {
             System.out.println("Enter a command:");
+
+
             String command = scanner.nextLine();
             String[] commandParts = command.split(" ");
             switch (commandParts[0]) {
@@ -30,6 +32,14 @@ public class ExampleClientCode {
                         System.out.println(tableName1);
                     }
                 }
+                case "help" -> System.out.println("""
+                        put <key> <value> - Put a value in a table
+                        get <key> - Get a value from a table
+                        remove <key> - Remove a value from a table
+                        getAll - Get all the values from a table
+                        getTableNames - Get all the table names
+                        exit - Exit the program
+                        """);
             }
         }
 
