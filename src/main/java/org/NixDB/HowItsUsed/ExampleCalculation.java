@@ -24,7 +24,7 @@ public class ExampleCalculation {
         NixDBConnection<String, Transaction> transactionConnection = new NixDBConnection<>("Transaction", "localhost", 2181, String.class, Transaction.class);
 
         // Performing some calculations or operations on the data
-        performCalculations(customerConnection, transactionConnection);
+        performCalculations(transactionConnection);
 
 
         // Printing all the data in the database
@@ -40,8 +40,7 @@ public class ExampleCalculation {
 
     }
 
-    private static void performCalculations(NixDBConnection<String, Customer> customerConnection,
-                                            NixDBConnection<String, Transaction> transactionConnection) {
+    private static void performCalculations(NixDBConnection<String, Transaction> transactionConnection) {
         // Example: Calculate the total transaction amount for a specific customer
         String customerId = "C001";
         double totalTransactionAmount = calculateTotalTransactionAmount(customerId, transactionConnection);
