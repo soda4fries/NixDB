@@ -1,4 +1,4 @@
-package org.NixDB.ZooKeeperTask;
+package org.NixDB.Zookeeper;
 
 import org.NixDB.PeerCommunication.Task;
 

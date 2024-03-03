@@ -1,8 +1,9 @@
-package org.NixDB.ZooKeeperTask;
+package org.NixDB.Zookeeper;
 
 import org.NixDB.PeerCommunication.PeerCommunication;
 import org.NixDB.PeerCommunication.Promise;
 import org.NixDB.PeerCommunication.SuccessPromise;
+
 
 public class OrderPeerConnectionTask implements ZookeeperTask {
 
@@ -18,8 +19,10 @@ public class OrderPeerConnectionTask implements ZookeeperTask {
         this. peerPort = peerPort;
     }
 
+
+
     @Override
-    public void Success(Promise returnedPromise) {
+    public void performOnSuccess(Promise returnedPromise) {
         if (returnedPromise instanceof SuccessPromise x) System.out.println(x.getMessage());
         else System.out.println("Error connecting");
     }

@@ -1,9 +1,9 @@
 package org.NixDB.PeerTasks;
 
-import org.NixDB.ZooKeeperTask.ConnectToPeer;
 import org.NixDB.PeerCommunication.PeerCommunication;
 import org.NixDB.PeerCommunication.Promise;
 import org.NixDB.PeerCommunication.SuccessPromise;
+import org.NixDB.Zookeeper.ConnectToPeer;
 
 public class AddPeer implements PeerTask {
 
@@ -31,7 +31,7 @@ public class AddPeer implements PeerTask {
     }
 
     @Override
-    public void Success(Promise returnedPromise) {
+    public void performOnSuccess(Promise returnedPromise) {
         if (returnedPromise instanceof ConnectToPeer.UUIDpromise x) {
             PeerCommunication peerCommunication = PeerCommunication.getInstance();
             peerCommunication.addPeerToList(x.uuid.toString(), ipAddress, port);

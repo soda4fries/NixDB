@@ -1,2 +1,2 @@
 # NixDB
-A Key-value NoSQL Database Written in Java, based on Skip-List.
+A Key-value NoSQL Distributed database written in java

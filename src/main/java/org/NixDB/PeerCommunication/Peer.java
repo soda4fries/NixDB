@@ -1,9 +1,9 @@
 package org.NixDB.PeerCommunication;
 
 public class Peer {
-    private String name;
-    private String ipAddress;
-    private int port;
+    private final String name;
+    private final String ipAddress;
+    private final int port;
 
     public Peer(String name, String ipAddress, int port) {
         this.name = name;
